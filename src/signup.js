@@ -29,6 +29,9 @@ export default function Signup({ navigation }) {
 
     const handleSignup = async () => {
         console.log("Signup initiated");
+        if (aadhar == "") {
+            aadhar = null;
+        }
         const response = await signup(
             fullname,
             designation,
@@ -42,7 +45,9 @@ export default function Signup({ navigation }) {
         );
         console.log("Signup", response);
         if (response) {
-            navigation.navigate("phoneNumber");
+            navigation.navigate("phoneNumber", {
+                number: mobile,
+            });
         } else {
             Alert.alert("Signup Failed");
         }
