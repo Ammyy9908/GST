@@ -1,23 +1,21 @@
-import axios from 'axios';
+import axios from "axios";
 
+async function getUser(token) {
+    try {
+        const r = await axios.get(process.env.BACKEND_URI + `/api/user-info`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-async function getUser(token){
-    try{
-        const r = await axios.get(`http://192.168.11.113:5001/api/user-info`,{
-            headers:{
-                'Authorization':`Bearer ${token}`
-            }
-        })
-
-        return r.data
-    }
-    catch(e){
-        console.log(e)
-        if(e.response && e.response.data){
-            return e.response.data
+        return r.data;
+    } catch (e) {
+        console.log(e);
+        if (e.response && e.response.data) {
+            return e.response.data;
         }
-        return false
+        return false;
     }
 }
 
-export default getUser
+export default getUser;
