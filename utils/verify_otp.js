@@ -2,7 +2,7 @@ import axios from "axios";
 
 async function verifyOtp(otp, mobile) {
   try {
-    const r = await axios.post(`http://192.168.29.171:5001/api/validate-otp`, {
+    const r = await axios.post(`http://192.168.29.33:5001/api/validate-otp`, {
       mobile,
       otp,
     });

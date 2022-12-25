@@ -2,7 +2,7 @@ import axios from "axios";
 
 async function sendOtp(mobile) {
   try {
-    const r = await axios.post(`http://192.168.29.171:5001/api/send-otp`, {
+    const r = await axios.post(`http://192.168.29.33:5001/api/send-otp`, {
       mobile,
     });
 

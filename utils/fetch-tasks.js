@@ -1,16 +1,15 @@
 import axios from "axios";
 
-async function getUser(token) {
+async function fetchTasks(token) {
   try {
-    const r = await axios.get(`http://192.168.29.33:5001/api/user-info`, {
+    const r = await axios.get(`192.168.29.33:5001/api/task-list`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: "Bearer " + token,
       },
     });
 
     return r.data;
   } catch (e) {
-    console.log(e);
     if (e.response && e.response.data) {
       return e.response.data;
     }
@@ -18,4 +17,4 @@ async function getUser(token) {
   }
 }
 
-export default getUser;
+export default fetchTasks;
