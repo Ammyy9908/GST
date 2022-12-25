@@ -16,6 +16,8 @@ import fetchTasks from "../utils/fetch-tasks";
 import getUser from "../utils/get-user-info";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, setUser } from "../features/authSlice";
+import fetchUsers from "../utils/get-users";
+import { setLeaders } from "../features/appSlice";
 
 export default function Tasks({ router, navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,6 +41,7 @@ export default function Tasks({ router, navigation }) {
     async function getUserInfo() {
       if (await getToken()) {
         let token = await getToken();
+        console.log("token", token);
         const user = await getUser(token);
         dispatch(setUser(user.data));
       } else {
@@ -47,18 +50,29 @@ export default function Tasks({ router, navigation }) {
       }
     }
 
+    async function getUsers() {
+      const token = await getToken();
+      const users = await fetchUsers(token);
+      if (users) {
+        console.log("users", users);
+        dispatch(setLeaders(users.data));
+      }
+    }
+
     async function getTasks() {
       const token = await getToken();
       const tasks = await fetchTasks(token);
       if (tasks) {
-        setTasks(tasks);
+        setTasks(tasks.data);
       }
     }
     getUserInfo();
     getTasks();
+    getUsers();
   }, [router]);
 
   console.log("Store user", user);
+  console.log("Store tasks", tasks);
   return (
     <ScrollView>
       <SafeAreaView>
@@ -125,13 +139,14 @@ export default function Tasks({ router, navigation }) {
           {tasks.map((task, i) => {
             return (
               <TouchableOpacity
-                style={styles.box1}
+                style={i % 2 == 0 ? styles.box1 : styles.box2}
                 onPress={() => navigation.navigate("taskView")}
+                key={i}
               >
                 <View>
                   <Text style={styles.txt1}>TODAY 5:30 PM</Text>
-                  <Text style={styles.txt2}>TASK 1</Text>
-                  <Text style={styles.txt4}>NAME OF EMPLOYEE ASSIGNED</Text>
+                  <Text style={styles.txt2}>{task.taskname}</Text>
+                  <Text style={styles.txt4}>Leader Name Comes here</Text>
                 </View>
                 <View style={styles.flag}></View>
               </TouchableOpacity>
@@ -193,7 +208,7 @@ export default function Tasks({ router, navigation }) {
           {/***************Modal Ends*****************/}
           <TouchableOpacity
             className={
-              "absolute  shadow-2xl right-4 h-12 w-12 bg-white -bottom-80 flex items-center justify-center text-white rounded-full"
+              "shadow-2xl -right-1 h-12 w-12 bg-white bottom-2 flex items-center justify-center text-white rounded-full z-100 fixed"
             }
             onPress={() => {
               setModalOpen(true);

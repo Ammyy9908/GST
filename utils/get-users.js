@@ -1,8 +1,8 @@
 import axios from "axios";
 
-async function getUser(token) {
+async function fetchUsers(token) {
   try {
-    const r = await axios.get(`http://192.168.29.170:5001/api/user-info`, {
+    const r = await axios.get(`http://192.168.29.170:5001/api/get-users-list`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -18,4 +18,4 @@ async function getUser(token) {
   }
 }
 
-export default getUser;
+export default fetchUsers;

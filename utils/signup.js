@@ -13,7 +13,7 @@ async function signup(
 ) {
   try {
     const r = await axios.post(
-      `http://192.168.29.33:5001/api/register`, //edit the url to local ip of current host
+      `http://192.168.29.170:5001/api/register`, //edit the url to local ip of current host
       {
         fullname: fullname,
         designation: designation,

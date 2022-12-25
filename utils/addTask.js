@@ -1,11 +1,12 @@
 import axios from "axios";
 
 async function addTask(token, data) {
+  console.log("Data", data);
   try {
     const r = await axios.post(
-      `192.168.29.33:5001/api/add-new-task`,
+      `http://192.168.29.170:5001/api/add-new-task`,
       {
-        taskname: data.taskname,
+        taskname: data.name,
         subject: data.subject,
         description: data.description,
         startDate: "2022-12-28",
@@ -14,7 +15,7 @@ async function addTask(token, data) {
         priority: data.priority,
         createdBy: data._id,
         followers: data.followers,
-        leader: data.leader,
+        leaders: data.createdBy,
         beneficiary: { mobile: "7406444532", name: "Rahul" },
       },
       {

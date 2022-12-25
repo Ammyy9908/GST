@@ -10,17 +10,67 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Modal,
+  Alert,
 } from "react-native";
 import { BlurView } from "expo-blur";
+import { useSelector } from "react-redux";
+import {
+  selectLeaders,
+  selectTaskFollowers,
+  selectTaskLeaders,
+} from "../features/appSlice";
+import addTask from "../utils/addTask";
+import { selectUser } from "../features/authSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AddNewTask({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [subject, setSubject] = useState("");
+  const [priority, setPriority] = useState("Low");
+  const leaders = useSelector(selectTaskLeaders);
+  const followers = useSelector(selectTaskFollowers);
+  const user = useSelector(selectUser);
 
-  const handleNewTask = () => {};
+  const getToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@jwt_token");
+      if (value !== null) {
+        return value;
+      }
+    } catch (e) {
+      // error reading value
+      console.log("error", e);
+      return false;
+    }
+  };
 
+  const handleNewTask = async () => {
+    const token = await getToken();
+    addTask(token, {
+      name,
+      description,
+      subject,
+      priority,
+      leaders,
+      followers,
+      createdBy: user._id,
+    })
+      .then((res) => {
+        console.log(res);
+        const { data } = res;
+        Alert.alert("Task Created", data.message);
+        navigation.navigate("tasks");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  console.log("State Leaders: ", leaders);
+
+  const handleAddNewTask = () => {};
   return (
     <ScrollView>
       <SafeAreaView style={{ flex: 1 }}>
@@ -61,6 +111,8 @@ export default function AddNewTask({ navigation }) {
                     textAlignVertical="top"
                     placeholderTextColor="#9599b3"
                     underlineColorAndroid={"#8a56ac"}
+                    defaultValue={name}
+                    onChangeText={(text) => setName(text)}
                   />
                 </View>
                 <View style={styles.inp1}>
@@ -70,6 +122,8 @@ export default function AddNewTask({ navigation }) {
                     textAlignVertical="top"
                     placeholderTextColor="#9599b3"
                     underlineColorAndroid={"#8a56ac"}
+                    defaultValue={subject}
+                    onChangeText={(text) => setSubject(text)}
                   />
                 </View>
                 <View style={styles.inp1}>
@@ -79,6 +133,8 @@ export default function AddNewTask({ navigation }) {
                     textAlignVertical="top"
                     placeholderTextColor="#9599b3"
                     underlineColorAndroid={"#8a56ac"}
+                    defaultValue={description}
+                    onChangeText={(text) => setDescription(text)}
                   />
                 </View>
               </View>
@@ -151,7 +207,10 @@ export default function AddNewTask({ navigation }) {
                           }}
                         >
                           <TouchableOpacity
-                            onPress={() => navigation.navigate("AddNewTask")}
+                            onPress={() => {
+                              setModalOpen(false);
+                              setPriority("High");
+                            }}
                           >
                             <View style={styles.btn4}>
                               <Text style={styles.txt9}>High</Text>
@@ -159,7 +218,10 @@ export default function AddNewTask({ navigation }) {
                           </TouchableOpacity>
                           <TouchableOpacity
                             style={{ paddingTop: 20 }}
-                            onPress={() => navigation.navigate("modifyTask")}
+                            onPress={() => {
+                              setModalOpen(false);
+                              setPriority("Low");
+                            }}
                           >
                             <View style={styles.btn5}>
                               <Text style={styles.txt9}>Low</Text>
@@ -179,10 +241,7 @@ export default function AddNewTask({ navigation }) {
             </View>
             <View style={{ alignItems: "center" }}>
               <View style={{ flexDirection: "row", paddingTop: 80 }}>
-                <TouchableOpacity
-                  style={styles.btn}
-                  onPress={() => navigation.navigate("Tasks")}
-                >
+                <TouchableOpacity style={styles.btn} onPress={handleNewTask}>
                   <Text style={styles.txt1}>ADD TASK </Text>
                 </TouchableOpacity>
               </View>
